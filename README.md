@@ -1,7 +1,6 @@
 # 📋 Gestor de Tareas — Vue.js + Bootstrap
 
-Aplicación web sencilla para gestionar tareas, desarrollada como proyecto final del curso **Programación para la Web** en la Universidad Gerardo Barrios.
-
+Aplicación web sencilla para gestionar tareas
 ---
 
 ## 🛠️ Tecnologías
