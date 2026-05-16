@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestor de Tareas</title>
+
+    <!-- ============================================================
+    PROYECTO FINAL - Gestor de Tareas
+    Universidad Gerardo Barrios
+    Creador: Josué Daniel Sosa Godinez - ISNP066724
+  ============================================================ -->
+
+    <!-- CDN Bootstrap: estilos e interfaz visual -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ── Fondo general de la página ── */
+      body {
+        background-color: #0f172a;
+        color: #f1f5f9;
+        min-height: 100vh;
+      }
+
+      /* ── Tarjeta/contenedor principal ── */
+      .card-app {
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      }
+
+      /* ── Título principal ── */
+      .titulo {
+        color: #f1f5f9;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      /* ── Inputs y select en dark mode ── */
+      .form-control,
+      .form-select {
+        background-color: #0f172a;
+        border: 1px solid #334155;
+        color: #f1f5f9;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        background-color: #0f172a;
+        border-color: #3b82f6;
+        color: #f1f5f9;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      }
+
+      /* ── Opciones del select ── */
+      .form-select option {
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+
+      /* ── Botón Agregar ── */
+      .btn-agregar {
+        background-color: #3b82f6;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        transition: background 0.2s;
+      }
+      .btn-agregar:hover {
+        background-color: #2563eb;
+        color: #fff;
+      }
+
+      /* ── Botón Limpiar todo ── */
+      .btn-limpiar {
+        background-color: #475569;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        transition: background 0.2s;
+      }
+      .btn-limpiar:hover {
+        background-color: #334155;
+        color: #fff;
+      }
+
+      /* ── Encabezado de la tabla ── */
+      .tabla-header {
+        background-color: #1e40af;
+        color: #fff;
+      }
+
+      /* ── Texto oscuro en filas de colores para legibilidad ── */
+      .table-danger td,
+      .table-warning td,
+      .table-success td {
+        color: #1e293b !important;
+        font-weight: 500;
+      }
+
+      /* ── Tarjetas de contadores ── */
+      .counter-card {
+        background-color: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        text-align: center;
+      }
+      .counter-card .numero {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #3b82f6;
+      }
+      .counter-card .etiqueta {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* ── Mensaje de error de validación ── */
+      .error-msg {
+        color: #f87171;
+        font-size: 0.82rem;
+        margin-top: 4px;
+      }
+
+      /* ── Tarea completada: texto tachado ── */
+      .tarea-completada {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+
+      /* ── Filtros de prioridad ── */
+      .filtros .btn {
+        font-size: 0.82rem;
+        border-radius: 20px;
+        padding: 4px 14px;
+      }
+
+      /* ── Placeholder visible en dark mode ── */
+      ::placeholder {
+        color: #64748b !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!--CONTENEDOR PRINCIPAL — Controlado por Vue -->
+    <div id="app" class="container py-5">
+      <div class="card-app mx-auto" style="max-width: 860px">
+        <!-- Título -->
+        <h2 class="titulo text-center mb-4">Gestor de Tareas</h2>
+
+        <!--SECCIÓN: Contadores-->
+        <div class="row g-3 mb-4">
+          <!-- Total de tareas -->
+          <div class="col-6 col-md-3">
+            <div class="counter-card">
+              <div class="numero">{{ tareas.length }}</div>
+              <div class="etiqueta">Total</div>
+            </div>
+          </div>
+
+          <!-- Contador Alta -->
+          <div class="col-6 col-md-3">
+            <div class="counter-card">
+              <div class="numero" style="color: #f87171">
+                {{ contarPor('Alta') }}
+              </div>
+              <div class="etiqueta">Alta</div>
+            </div>
+          </div>
+
+          <!-- Contador Media -->
+          <div class="col-6 col-md-3">
+            <div class="counter-card">
+              <div class="numero" style="color: #fbbf24">
+                {{ contarPor('Media') }}
+              </div>
+              <div class="etiqueta">Media</div>
+            </div>
+          </div>
+
+          <!-- Contador Baja -->
+          <div class="col-6 col-md-3">
+            <div class="counter-card">
+              <div class="numero" style="color: #34d399">
+                {{ contarPor('Baja') }}
+              </div>
+              <div class="etiqueta">Baja</div>
+            </div>
+          </div>
+        </div>
+        <!-- FIN Contadores -->
+
+        <!--SECCIÓN: Formulario para agregar tarea-->
+        <div class="row g-3 mb-2">
+          <!-- Campo nombre de la tarea -->
+          <div class="col-md-5">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nombre de la tarea"
+              v-model="nombreTarea"
+            />
+            <!-- Mensaje de error si el campo está vacío -->
+            <div class="error-msg" v-if="errorNombre">
+              ⚠️ Ingresa el nombre de la tarea.
+            </div>
+          </div>
+
+          <!-- Selector de prioridad -->
+          <div class="col-md-3">
+            <select class="form-select" v-model="prioridad">
+              <option value="">-- Prioridad --</option>
+              <option value="Alta">Alta</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+            <!-- Mensaje de error si no se seleccionó prioridad -->
+            <div class="error-msg" v-if="errorPrioridad">
+              ⚠️ Selecciona una prioridad.
+            </div>
+          </div>
+
+          <!-- Botón Agregar -->
+          <div class="col-md-2">
+            <button class="btn btn-agregar w-100" @click="agregarTarea">
+              Agregar
+            </button>
+          </div>
+
+          <!-- Botón Limpiar todo -->
+          <div class="col-md-2">
+            <button class="btn btn-limpiar w-100" @click="limpiarTodo">
+              Limpiar
+            </button>
+          </div>
+        </div>
+        <!-- FIN Formulario -->
+
+        <!--SECCIÓN: Filtros por prioridad-->
+        <div class="filtros d-flex gap-2 flex-wrap mb-4 mt-2">
+          <span
+            class="text-secondary"
+            style="font-size: 0.85rem; align-self: center"
+            >Filtrar:</span
+          >
+
+          <!-- Cada botón cambia el filtro activo -->
+          <button
+            class="btn btn-outline-secondary"
+            @click="filtroActivo = 'Todos'"
+            :class="{ 'btn-secondary': filtroActivo === 'Todos' }"
+          >
+            Todos
+          </button>
+
+          <button
+            class="btn btn-outline-danger"
+            @click="filtroActivo = 'Alta'"
+            :class="{ 'btn-danger': filtroActivo === 'Alta' }"
+          >
+            Alta
+          </button>
+
+          <button
+            class="btn btn-outline-warning"
+            @click="filtroActivo = 'Media'"
+            :class="{ 'btn-warning': filtroActivo === 'Media' }"
+          >
+            Media
+          </button>
+
+          <button
+            class="btn btn-outline-success"
+            @click="filtroActivo = 'Baja'"
+            :class="{ 'btn-success': filtroActivo === 'Baja' }"
+          >
+            Baja
+          </button>
+        </div>
+        <!-- FIN Filtros -->
+
+        <!--SECCIÓN: Tabla de tareas-->
+        <table class="table table-bordered text-center align-middle">
+          <thead>
+            <tr class="tabla-header">
+              <th>#</th>
+              <th>Tarea</th>
+              <th>Prioridad</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Mensaje si no hay tareas -->
+            <tr v-if="tareasFiltradas.length === 0">
+              <td colspan="6" class="text-muted py-3">
+                No hay tareas registradas
+              </td>
+            </tr>
+
+            <!-- Recorre las tareas filtradas -->
+            <tr
+              v-for="(tarea, index) in tareasFiltradas"
+              :key="tarea.id"
+              :class="colorFila(tarea.prioridad)"
+            >
+              <!-- Número de fila -->
+              <td>{{ index + 1 }}</td>
+
+              <!-- Nombre: muestra input si está en modo edición, si no el texto -->
+              <td>
+                <input
+                  v-if="tarea.editando"
+                  type="text"
+                  class="form-control form-control-sm"
+                  v-model="tarea.nombre"
+                  style="background: #fff; color: #1e293b"
+                />
+                <span v-else :class="{ 'tarea-completada': tarea.completada }">
+                  {{ tarea.nombre }}
+                </span>
+              </td>
+
+              <!-- Prioridad -->
+              <td>
+                <select
+                  v-if="tarea.editando"
+                  class="form-select form-select-sm"
+                  v-model="tarea.prioridad"
+                  style="background: #fff; color: #1e293b"
+                >
+                  <option>Alta</option>
+                  <option>Media</option>
+                  <option>Baja</option>
+                </select>
+                <span v-else>{{ tarea.prioridad }}</span>
+              </td>
+
+              <!-- Fecha de creación -->
+              <td style="font-size: 0.8rem">{{ tarea.fecha }}</td>
+
+              <!-- Estado: completada o pendiente -->
+              <td>
+                <span
+                  v-if="tarea.completada"
+                  style="color: #16a34a; font-weight: 600"
+                  >✔ Hecha</span
+                >
+                <span v-else style="color: #94a3b8">Pendiente</span>
+              </td>
+
+              <!-- Botones de acción -->
+              <td>
+                <div class="d-flex gap-1 justify-content-center flex-wrap">
+                  <!-- Completar / Deshacer -->
+                  <button
+                    class="btn btn-sm"
+                    :class="tarea.completada ? 'btn-secondary' : 'btn-success'"
+                    @click="toggleCompletada(tarea)"
+                  >
+                    {{ tarea.completada ? 'Deshacer' : '✔' }}
+                  </button>
+
+                  <!-- Editar / Guardar -->
+                  <button
+                    class="btn btn-sm btn-warning"
+                    @click="toggleEditar(tarea)"
+                  >
+                    {{ tarea.editando ? 'Guardar' : '✏️' }}
+                  </button>
+
+                  <!-- Eliminar -->
+                  <button
+                    class="btn btn-sm btn-danger"
+                    @click="eliminarTarea(tarea.id)"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- FIN Tabla -->
+      </div>
+    </div>
+    <!-- FIN Contenedor Vue -->
+
+    <!-- CDN Vue.js: lógica interactiva y reactividad -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+      // APLICACIÓN VUE — Gestor de Tareas
+      Vue.createApp({
+        data() {
+          return {
+            nombreTarea: '', // Valor del input nombre
+            prioridad: '', // Valor del select prioridad
+            errorNombre: false, // Controla mensaje de error en nombre
+            errorPrioridad: false, // Controla mensaje de error en prioridad
+            filtroActivo: 'Todos', // Filtro seleccionado actualmente
+            contadorId: 0, // ID único incremental para cada tarea
+            tareas: [], // Arreglo principal de tareas
+          };
+        },
+
+        computed: {
+          // Devuelve las tareas según el filtro activo
+          tareasFiltradas() {
+            if (this.filtroActivo === 'Todos') return this.tareas;
+            return this.tareas.filter((t) => t.prioridad === this.filtroActivo);
+          },
+        },
+
+        methods: {
+          // ── Agregar una nueva tarea ──
+          agregarTarea() {
+            // Validación: resetea errores primero
+            this.errorNombre = false;
+            this.errorPrioridad = false;
+
+            // Verifica que los campos no estén vacíos
+            if (this.nombreTarea.trim() === '') this.errorNombre = true;
+            if (this.prioridad === '') this.errorPrioridad = true;
+            if (this.errorNombre || this.errorPrioridad) return;
+
+            // Obtiene la fecha actual formateada
+            const hoy = new Date();
+            const fecha = hoy.toLocaleDateString('es-SV', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            });
+
+            // Agrega la tarea al arreglo con todos sus campos
+            this.tareas.push({
+              id: ++this.contadorId,
+              nombre: this.nombreTarea.trim(),
+              prioridad: this.prioridad,
+              fecha: fecha,
+              completada: false, // Inicia como pendiente
+              editando: false, // Inicia fuera de modo edición
+            });
+
+            // Limpia los campos del formulario
+            this.nombreTarea = '';
+            this.prioridad = '';
+          },
+
+          // ── Eliminar tarea por su ID ──
+          eliminarTarea(id) {
+            this.tareas = this.tareas.filter((t) => t.id !== id);
+          },
+
+          // ── Limpiar todas las tareas ──
+          limpiarTodo() {
+            if (this.tareas.length === 0) return;
+            if (confirm('¿Estás seguro de eliminar todas las tareas?')) {
+              this.tareas = [];
+            }
+          },
+
+          // ── Marcar o desmarcar como completada ──
+          toggleCompletada(tarea) {
+            tarea.completada = !tarea.completada;
+          },
+
+          // ── Activar o desactivar modo edición ──
+          toggleEditar(tarea) {
+            tarea.editando = !tarea.editando;
+          },
+
+          // ── Retorna la clase Bootstrap según prioridad ──
+          colorFila(prioridad) {
+            if (prioridad === 'Alta') return 'table-danger';
+            if (prioridad === 'Media') return 'table-warning';
+            if (prioridad === 'Baja') return 'table-success';
+          },
+
+          // ── Cuenta tareas por prioridad ──
+          contarPor(prioridad) {
+            return this.tareas.filter((t) => t.prioridad === prioridad).length;
+          },
+        },
+      }).mount('#app'); // Conecta Vue al div #app
+    </script>
+  </body>
+</html>
