@@ -4,22 +4,27 @@ Aplicación web sencilla para gestionar tareas, desarrollada como proyecto final
 
 ---
 
-## 🚀 Demo rápida
+## 🛠️ Tecnologías
 
-Abre el archivo `index.html` directamente en tu navegador — no requiere instalación ni servidor.
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap_5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js_3-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
+
+| Tecnología | Versión | Uso |
+|---|---|---|
+| HTML5 | — | Estructura del documento |
+| CSS3 | — | Dark mode con paleta hexadecimal |
+| Bootstrap | 5.3 (CDN) | Diseño visual, tabla y componentes |
+| Vue.js | 3 (CDN) | Lógica reactiva e interactividad |
+
+> No se usan archivos externos de JavaScript ni herramientas de compilación. Todo está dentro de un único archivo `index.html`.
 
 ---
 
-## 🛠️ Tecnologías
+## 🚀 Demo rápida
 
-| Tecnología | Uso |
-|---|---|
-| HTML5 | Estructura del documento |
-| Bootstrap 5 (CDN) | Diseño visual, tabla y componentes |
-| Vue.js 3 (CDN) | Lógica reactiva e interactividad |
-| CSS personalizado | Dark mode con paleta hexadecimal |
-
-> No se usan archivos externos de JavaScript ni herramientas de compilación. Todo está dentro de un único archivo `index.html`.
+Abre el archivo `index.html` directamente en tu navegador — no requiere instalación ni servidor.
 
 ---
 
@@ -79,6 +84,4 @@ git clone https://github.com/tu-usuario/gestor-tareas-vuejs.git
 
 ## 👨‍💻 Autor
 
-**Josué Daniel Sosa Godinez** — ISNP066724  
-Ingeniería en Desarrollo de Software  
-Universidad Gerardo Barrios
+**Josué Daniel Sosa Godinez** 
