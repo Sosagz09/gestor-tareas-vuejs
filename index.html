@@ -251,14 +251,15 @@
             >Filtrar:</span
           >
 
-          <!-- Cada botón cambia el filtro activo -->
-          <button
-            class="btn btn-outline-secondary"
-            @click="filtroActivo = 'Todos'"
-            :class="{ 'btn-secondary': filtroActivo === 'Todos' }"
-          >
-            Todos
-          </button>
+        <!-- Cada botón cambia el filtro activo -->
+        <button
+          class="btn"
+          @click="filtroActivo = 'Todos'"
+          :class="filtroActivo === 'Todos' ? 'btn-secondary' : ''"
+          style="border: 1px solid #64748b; color: #f1f5f9;"
+        >
+          Todos
+        </button>
 
           <button
             class="btn btn-outline-danger"
